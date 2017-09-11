@@ -3,7 +3,7 @@ import time
 
 # Set the variables
 
-health = 20
+health = 30
 sword = random.randint(1, 5)
 ironfist = random.randint(2, 4)
 trollshealth = 6
@@ -32,10 +32,10 @@ while playagain == "yes" or playagain == "y":
 		time.sleep(1.3)
 	print("\n\tYou have", health, "health\n")
 	time.sleep(1.3)
-	
+
 
 	while trolls != 0 and health > 0:
-	
+
 		attack = int(input("\nWhat attack should you use? [Enter 1 for Sword or 2 for Iron Fist]\n\n"))
 		time.sleep(.75)
 
@@ -50,8 +50,8 @@ while playagain == "yes" or playagain == "y":
 			time.sleep(.75)
 			del trollattack
 			trollattack = random.randint(0,3)
-			print("You have", health, "health left\n")	
-			time.sleep(.75)	
+			print("You have", health, "health left\n")
+			time.sleep(.75)
 			print("Your current target has", trollshealth, "health left\n")
 			time.sleep(.75)
 			if trollshealth <= 0:
@@ -63,7 +63,7 @@ while playagain == "yes" or playagain == "y":
 				print("There are", trolls, "trolls left\n")
 				time.sleep(.75)
 
-		elif attack == 2: 
+		elif attack == 2:
 			trollshealth -= ironfist
 			print("\nYou used Iron Fist, causing", ironfist, "damage.\n")
 			time.sleep(.75)
@@ -103,7 +103,7 @@ while playagain == "yes" or playagain == "y":
 
 	playagain = ""
 
-	while not playagain:		
+	while not playagain:
 		shallwe = input("\nPlay again? [yes or no] ")
 
 		if shallwe == "yes" or shallwe == "y":
