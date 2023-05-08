@@ -21,3 +21,12 @@ class Troll:
 
     def is_alive(self):
         return self.health > 0
+
+class Dragon:
+    def __init__(self, health):
+        self.health = health
+        fire_breath = Weapon("Fire Breath", "1d12+4")
+        self.weapons = [fire_breath]
+
+    def is_alive(self):
+        return self.health > 0

@@ -1,9 +1,71 @@
+import tkinter as tk
+from tkinter import ttk
 import random
+import time
 
-from classes.character import Player, Troll, Dragon
-from classes.weapon import Weapon
-from classes.utils import write_with_sleep, get_attack
+class Character:
+    def __init__(self, health):
+        self.health = health
 
+    def is_alive(self):
+        return self.health > 0
+
+class Player(Character):
+    def __init__(self, health, weapons):
+        super().__init__(health)
+        self.weapons = weapons
+
+class Troll:
+    def __init__(self, health):
+        self.health = health
+        club = Weapon("Club", "1d4+2")
+        fist = Weapon("Fist", "1d4")
+        self.weapons = [club, fist]
+
+    def is_alive(self):
+        return self.health > 0
+
+class Dragon:
+    def __init__(self, health):
+        self.health = health
+        fire_breath = Weapon("Fire Breath", "1d12+4")
+        self.weapons = [fire_breath]
+
+    def is_alive(self):
+        return self.health > 0
+    
+class Weapon:
+    def __init__(self, name, dice_roll):
+        self.name = name
+        self.dice_roll = dice_roll
+
+    def get_damage(self):
+        num_dice, sides = self.dice_roll.split('d')
+        if '+' in sides:
+            sides, bonus = sides.split('+')
+            bonus = int(bonus)
+        else:
+            bonus = 0
+        return sum(random.randint(1, int(sides)) for _ in range(int(num_dice))) + bonus
+
+def print_sleep(message, sleep_time=1.3):
+    print(message)
+    time.sleep(sleep_time)
+
+def write_with_sleep(write, message, sleep_time=0.7):
+    write(message)
+    time.sleep(sleep_time)
+
+def get_attack(weapons, write, read):
+    while True:
+        write_with_sleep(write, "\nWhat attack should you use?\n", 0.2)
+        for idx, weapon in enumerate(weapons, start=1):
+            write_with_sleep(write, f"{idx}: {weapon.name} ({weapon.dice_roll})\n", 0)
+        user_choice = read()
+        if user_choice.isdigit() and 1 <= int(user_choice) <= len(weapons):
+            return weapons[int(user_choice) - 1]
+        write_with_sleep(write, "\nInvalid input. Please choose a valid attack.\n", 0)
+    
 def initialize_game():
     sword = Weapon("Sword", "1d6+2")
     iron_fist = Weapon("Iron Fist", "1d8")
@@ -97,3 +159,52 @@ def play_game(write, read, window):
 
         if play_again in ["no", "n"]:
             window.destroy()
+
+class GameWindow(tk.Tk):
+    def __init__(self):
+        super().__init__()
+
+        self.title("Troll Slayer")
+        self.geometry("600x400")
+
+        self.main_frame = ttk.Frame(self)
+        self.main_frame.pack(pady=20)
+
+        self.text_widget = tk.Text(self.main_frame, wrap=tk.WORD, width=60, height=15)
+        self.text_widget.pack()
+
+        self.input_frame = ttk.Frame(self)
+        self.input_frame.pack(pady=10)
+
+        self.entry = ttk.Entry(self.input_frame, width=30)
+        self.entry.pack(side=tk.LEFT)
+        self.entry.bind('<Return>', lambda event: self.process_input())
+
+        self.submit_button = ttk.Button(self.input_frame, text="Submit", command=self.process_input)
+        self.submit_button.pack(side=tk.LEFT)
+
+        self.current_input = ""
+
+    def process_input(self):
+        self.current_input = self.entry.get().strip().lower()
+        self.entry.delete(0, tk.END)
+
+    def write(self, text):
+        self.text_widget.insert(tk.END, text)
+        self.text_widget.see(tk.END)
+        self.text_widget.update()
+
+    def read(self):
+        self.current_input = ""
+        while not self.current_input:
+            self.update()
+        return self.current_input
+
+def main():
+    game_window = GameWindow()
+    game_window.write("Welcome to Troll Slayer!\n\n")
+    play_game(game_window.write, game_window.read, game_window)
+    game_window.mainloop()
+
+if __name__ == "__main__":
+    main()
