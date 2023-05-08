@@ -48,3 +48,6 @@ Temporary Items
 
 # Python cache files
 *.pyc
+
+/dist
+/build
